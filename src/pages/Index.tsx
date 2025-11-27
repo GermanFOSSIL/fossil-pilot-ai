@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Session } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Loader2 } from "lucide-react";
+import { Loader2, Sparkles, FileText, BarChart3 } from "lucide-react";
+import { KpiCard } from "@/components/KpiCard";
+import { StatusBadge } from "@/components/StatusBadge";
 
 const Index = () => {
   const navigate = useNavigate();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [projects, setProjects] = useState<any[]>([]);
+  const [systems, setSystems] = useState<any[]>([]);
+  const [selectedProject, setSelectedProject] = useState("");
+  const [selectedSystem, setSelectedSystem] = useState("");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -19,6 +24,8 @@ const Index = () => {
       setLoading(false);
       if (!session) {
         navigate("/auth");
+      } else {
+        loadData();
       }
     });
 
@@ -31,6 +38,41 @@ const Index = () => {
 
     return () => subscription.unsubscribe();
   }, [navigate]);
+
+  const loadData = async () => {
+    const { data: projectsData } = await supabase.from("projects").select("*").order("code");
+    setProjects(projectsData || []);
+    
+    if (projectsData && projectsData.length > 0) {
+      setSelectedProject(projectsData[0].id);
+      const { data: systemsData } = await supabase
+        .from("systems")
+        .select("*")
+        .eq("project_id", projectsData[0].id)
+        .order("code");
+      setSystems(systemsData || []);
+      if (systemsData && systemsData.length > 0) {
+        setSelectedSystem(systemsData[0].id);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (selectedProject) {
+      const loadSystems = async () => {
+        const { data } = await supabase
+          .from("systems")
+          .select("*")
+          .eq("project_id", selectedProject)
+          .order("code");
+        setSystems(data || []);
+        if (data && data.length > 0) {
+          setSelectedSystem(data[0].id);
+        }
+      };
+      loadSystems();
+    }
+  }, [selectedProject]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -45,6 +87,8 @@ const Index = () => {
     );
   }
 
+  const currentSystem = systems.find((s) => s.id === selectedSystem);
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-6">
@@ -53,33 +97,54 @@ const Index = () => {
             <h1 className="text-4xl font-bold">FOSSIL Completions AI Pilot</h1>
             <p className="text-muted-foreground mt-2">Capa de inteligencia para Systems Completions e ITRs</p>
           </div>
-          <Button onClick={handleSignOut} variant="outline">
-            Cerrar Sesión
-          </Button>
+          <div className="flex gap-2">
+            <Link to="/copilot">
+              <Button variant="outline">
+                <Sparkles className="mr-2 h-4 w-4" />
+                Copiloto IA
+              </Button>
+            </Link>
+            <Link to="/insights">
+              <Button variant="outline">
+                <FileText className="mr-2 h-4 w-4" />
+                Insights
+              </Button>
+            </Link>
+            <Button onClick={handleSignOut} variant="outline">
+              Cerrar Sesión
+            </Button>
+          </div>
         </div>
 
         <Card className="p-6 mb-8">
           <div className="grid md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium mb-2">Proyecto</label>
-              <Select defaultValue="EPF-LACA32">
+              <Select value={selectedProject} onValueChange={setSelectedProject}>
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccionar proyecto" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="EPF-LACA32">EPF Bajada de Añelo – LACA32</SelectItem>
+                  {projects.map((p) => (
+                    <SelectItem key={p.id} value={p.id}>
+                      {p.code} - {p.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Sistema</label>
-              <Select defaultValue="101P_02C">
+              <Select value={selectedSystem} onValueChange={setSelectedSystem}>
                 <SelectTrigger>
                   <SelectValue placeholder="Seleccionar sistema" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="101P_02C">101P_02C – Oil Processing Train</SelectItem>
-                  <SelectItem value="101EL_02E">101EL_02E – Power Distribution</SelectItem>
+                  {systems.map((s) => (
+                    <SelectItem key={s.id} value={s.id}>
+                      {s.code} - {s.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -87,47 +152,51 @@ const Index = () => {
         </Card>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="p-6">
-            <h3 className="text-sm font-medium text-muted-foreground mb-2">ITR A Completado</h3>
-            <p className="text-3xl font-bold text-primary">78%</p>
-            <Badge className="mt-2" variant="outline">En progreso</Badge>
-          </Card>
-          <Card className="p-6">
-            <h3 className="text-sm font-medium text-muted-foreground mb-2">ITR B Completado</h3>
-            <p className="text-3xl font-bold text-secondary">52%</p>
-            <Badge className="mt-2" variant="outline">En progreso</Badge>
-          </Card>
-          <Card className="p-6">
-            <h3 className="text-sm font-medium text-muted-foreground mb-2">Punch Abiertos</h3>
-            <p className="text-3xl font-bold text-warning">7</p>
-            <p className="text-sm text-muted-foreground mt-1">5 A / 4 B / 3 C</p>
-          </Card>
-          <Card className="p-6">
-            <h3 className="text-sm font-medium text-muted-foreground mb-2">Preservación Vencida</h3>
-            <p className="text-3xl font-bold text-destructive">2</p>
-            <Badge className="mt-2" variant="destructive">Requiere atención</Badge>
-          </Card>
+          <KpiCard
+            title="ITR A Completado"
+            value="78%"
+            badge={{ text: "En progreso", variant: "outline" }}
+          />
+          <KpiCard
+            title="ITR B Completado"
+            value="52%"
+            badge={{ text: "Precomisionado", variant: "outline" }}
+          />
+          <KpiCard
+            title="Punch Abiertos"
+            value="7"
+            subtitle="5 A / 4 B / 3 C"
+            badge={{ text: "Críticos", variant: "destructive" }}
+          />
+          <KpiCard
+            title="Preservación Vencida"
+            value="2"
+            badge={{ text: "Requiere atención", variant: "destructive" }}
+          />
         </div>
 
-        <Card className="p-6">
-          <h2 className="text-2xl font-bold mb-4">Estado del Sistema: 101P_02C – Oil Processing Train</h2>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+        {currentSystem && (
+          <Card className="p-6 mb-6">
+            <div className="flex justify-between items-start mb-4">
               <div>
-                <p className="font-semibold">101P_02C-01 – Desalinador System</p>
-                <p className="text-sm text-muted-foreground">68% completado</p>
+                <h2 className="text-2xl font-bold mb-2">
+                  {currentSystem.code} – {currentSystem.name}
+                </h2>
+                <div className="flex gap-2">
+                  <StatusBadge status={currentSystem.status} type="system" />
+                  <StatusBadge status={currentSystem.criticality} type="criticality" />
+                </div>
               </div>
-              <Badge>En progreso</Badge>
+              <Link to={`/systems/${selectedSystem}`}>
+                <Button>
+                  <BarChart3 className="mr-2 h-4 w-4" />
+                  Ver Dashboard Completo
+                </Button>
+              </Link>
             </div>
-            <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-              <div>
-                <p className="font-semibold">101P_02C-02 – Stabilizer System</p>
-                <p className="text-sm text-muted-foreground">95% completado</p>
-              </div>
-              <Badge>En progreso</Badge>
-            </div>
-          </div>
-        </Card>
+            <p className="text-muted-foreground">{currentSystem.description}</p>
+          </Card>
+        )}
       </div>
     </div>
   );

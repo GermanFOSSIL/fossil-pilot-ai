@@ -5,6 +5,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import SystemDashboard from "./pages/SystemDashboard";
+import SubsystemDetail from "./pages/SubsystemDetail";
+import Copilot from "./pages/Copilot";
+import Insights from "./pages/Insights";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -18,6 +22,10 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/systems/:systemId" element={<SystemDashboard />} />
+          <Route path="/systems/:systemId/subsystems/:subsystemId" element={<SubsystemDetail />} />
+          <Route path="/copilot" element={<Copilot />} />
+          <Route path="/insights" element={<Insights />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
