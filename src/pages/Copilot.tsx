@@ -83,107 +83,101 @@ const Copilot = () => {
   };
 
   return (
-    <div className="p-6">
-      <div className="max-w-5xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 flex items-center gap-2">
-            <Sparkles className="h-8 w-8 text-accent" />
-            Copiloto IA
-          </h1>
-          <p className="text-muted-foreground">Analiza sistemas, ITRs y punch lists con inteligencia artificial</p>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          <div>
-            <label className="block text-sm font-medium mb-2">Proyecto</label>
-            <Select value={selectedProject} onValueChange={setSelectedProject}>
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar proyecto" />
-              </SelectTrigger>
-              <SelectContent>
-                {projects.map((p) => (
-                  <SelectItem key={p.id} value={p.id}>
-                    {p.code} - {p.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">Sistema</label>
-            <Select value={selectedSystem} onValueChange={setSelectedSystem}>
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar sistema" />
-              </SelectTrigger>
-              <SelectContent>
-                {systems.map((s) => (
-                  <SelectItem key={s.id} value={s.id}>
-                    {s.code} - {s.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <Card className="p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4">Preguntas rápidas</h2>
-          <div className="grid md:grid-cols-2 gap-3">
-            {quickQuestions.map((q, idx) => (
-              <Button 
-                key={idx} 
-                variant="outline" 
-                onClick={() => handleAskQuestion(q)} 
-                disabled={loading} 
-                className="justify-start text-left h-auto py-3 px-4 whitespace-normal break-words"
-              >
-                <span className="block">{q}</span>
-              </Button>
-            ))}
-          </div>
-        </Card>
-
-        <Card className="p-6 mb-6">
-          <h2 className="text-lg font-semibold mb-4">Tu pregunta</h2>
-          <Textarea
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            placeholder="Ej: ¿Cuál es el estado general del sistema? ¿Qué falta para completar el precomisionado?"
-            className="min-h-[100px] mb-4"
-            disabled={loading}
-          />
-          <Button onClick={() => handleAskQuestion()} disabled={loading || !question.trim()}>
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Analizando...
-              </>
-            ) : (
-              <>
-                <Send className="mr-2 h-4 w-4" />
-                Generar Respuesta
-              </>
-            )}
-          </Button>
-        </Card>
-
-        {response && (
-          <Card className="p-6 mb-6 bg-accent/5 border-accent/20">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-accent" />
-              Respuesta del Copiloto
-            </h2>
-            <div className="prose prose-sm max-w-none whitespace-pre-wrap">{response}</div>
-          </Card>
-        )}
-
-        {context && (
-          <Card className="p-6 bg-muted/30">
-            <h2 className="text-sm font-semibold mb-2 text-muted-foreground">Datos utilizados para el análisis</h2>
-            <pre className="text-xs text-muted-foreground overflow-auto">{context}</pre>
-          </Card>
-        )}
+    <div className="space-y-6">
+      <div>
+        <p className="text-muted-foreground">Analiza sistemas, ITRs y punch lists con inteligencia artificial</p>
       </div>
+
+      <div className="grid md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-sm font-medium mb-2">Proyecto</label>
+          <Select value={selectedProject} onValueChange={setSelectedProject}>
+            <SelectTrigger>
+              <SelectValue placeholder="Seleccionar proyecto" />
+            </SelectTrigger>
+            <SelectContent>
+              {projects.map((p) => (
+                <SelectItem key={p.id} value={p.id}>
+                  {p.code} - {p.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-2">Sistema</label>
+          <Select value={selectedSystem} onValueChange={setSelectedSystem}>
+            <SelectTrigger>
+              <SelectValue placeholder="Seleccionar sistema" />
+            </SelectTrigger>
+            <SelectContent>
+              {systems.map((s) => (
+                <SelectItem key={s.id} value={s.id}>
+                  {s.code} - {s.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
+      <Card className="p-6">
+        <h2 className="text-lg font-semibold mb-4">Preguntas rápidas</h2>
+        <div className="grid md:grid-cols-2 gap-3">
+          {quickQuestions.map((q, idx) => (
+            <Button 
+              key={idx} 
+              variant="outline" 
+              onClick={() => handleAskQuestion(q)} 
+              disabled={loading} 
+              className="justify-start text-left h-auto py-3 px-4 whitespace-normal break-words"
+            >
+              <span className="block">{q}</span>
+            </Button>
+          ))}
+        </div>
+      </Card>
+
+      <Card className="p-6">
+        <h2 className="text-lg font-semibold mb-4">Tu pregunta</h2>
+        <Textarea
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          placeholder="Ej: ¿Cuál es el estado general del sistema? ¿Qué falta para completar el precomisionado?"
+          className="min-h-[100px] mb-4"
+          disabled={loading}
+        />
+        <Button onClick={() => handleAskQuestion()} disabled={loading || !question.trim()}>
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Analizando...
+            </>
+          ) : (
+            <>
+              <Send className="mr-2 h-4 w-4" />
+              Generar Respuesta
+            </>
+          )}
+        </Button>
+      </Card>
+
+      {response && (
+        <Card className="p-6 bg-accent/5 border-accent/20">
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-accent" />
+            Respuesta del Copiloto
+          </h2>
+          <div className="prose prose-sm max-w-none whitespace-pre-wrap">{response}</div>
+        </Card>
+      )}
+
+      {context && (
+        <Card className="p-6 bg-muted/30">
+          <h2 className="text-sm font-semibold mb-2 text-muted-foreground">Datos utilizados para el análisis</h2>
+          <pre className="text-xs text-muted-foreground overflow-auto">{context}</pre>
+        </Card>
+      )}
     </div>
   );
 };

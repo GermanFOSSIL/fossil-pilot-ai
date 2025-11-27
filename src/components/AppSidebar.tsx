@@ -1,14 +1,5 @@
-import { 
-  Home, 
-  Sparkles, 
-  LightbulbIcon, 
-  Settings,
-  Upload,
-  Database,
-  History as HistoryIcon
-} from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import { useLocation } from "react-router-dom";
+import { navigationConfig } from "@/config/navigation";
 
 import {
   Sidebar,
@@ -22,28 +13,9 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-const mainItems = [
-  { title: "Dashboard", url: "/", icon: Home },
-  { title: "Copiloto IA", url: "/copilot", icon: Sparkles },
-  { title: "Insights", url: "/insights", icon: LightbulbIcon },
-];
-
-const adminItems = [
-  { title: "Importación de Datos", url: "/admin/data-import", icon: Upload },
-  { title: "Gestión de Datos", url: "/admin/data-management", icon: Database },
-  { title: "Historial", url: "/admin/import-history", icon: HistoryIcon },
-];
-
 export function AppSidebar() {
   const { state } = useSidebar();
-  const location = useLocation();
-  const currentPath = location.pathname;
   const collapsed = state === "collapsed";
-
-  const isActive = (path: string) => {
-    if (path === "/") return currentPath === "/";
-    return currentPath.startsWith(path);
-  };
 
   return (
     <Sidebar
@@ -65,53 +37,33 @@ export function AppSidebar() {
           )}
         </div>
 
-        <SidebarGroup>
-          <SidebarGroupLabel>Principal</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {mainItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink 
-                      to={item.url} 
-                      end={item.url === "/"}
-                      className="hover:bg-muted/50 flex items-center gap-2" 
-                      activeClassName="bg-muted text-primary font-medium"
-                    >
-                      <item.icon className="h-4 w-4 flex-shrink-0" />
-                      {!collapsed && <span className="truncate">{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel>
-            <Settings className="h-4 w-4 mr-2" />
-            {!collapsed && "Administración"}
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {adminItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink 
-                      to={item.url}
-                      className="hover:bg-muted/50 flex items-center gap-2" 
-                      activeClassName="bg-muted text-primary font-medium"
-                    >
-                      <item.icon className="h-4 w-4 flex-shrink-0" />
-                      {!collapsed && <span className="truncate">{item.title}</span>}
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {navigationConfig.map((section) => (
+          <SidebarGroup key={section.title}>
+            <SidebarGroupLabel className="text-xs uppercase tracking-wider text-muted-foreground">
+              {section.title}
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {section.items.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild>
+                      <NavLink 
+                        to={item.url} 
+                        end={item.end}
+                        className="flex items-center gap-3 px-3 py-2 rounded-md transition-colors hover:bg-accent/50" 
+                        activeClassName="bg-accent text-accent-foreground font-semibold"
+                        aria-current="page"
+                      >
+                        <item.icon className="h-4 w-4 flex-shrink-0" />
+                        {!collapsed && <span className="truncate">{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
     </Sidebar>
   );

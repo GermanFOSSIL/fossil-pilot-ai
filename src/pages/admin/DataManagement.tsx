@@ -1,4 +1,3 @@
-import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -84,16 +83,14 @@ export default function DataManagement() {
   };
 
   return (
-    <Layout>
-      <div className="container mx-auto p-6 space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Gestión de Datos</h1>
-          <p className="text-muted-foreground">
-            Edición masiva, validación y eliminación de datos importados
-          </p>
-        </div>
+    <div className="space-y-6">
+      <div>
+        <p className="text-muted-foreground">
+          Edición masiva, validación y eliminación de datos importados
+        </p>
+      </div>
 
-        <Card>
+      <Card>
           <CardHeader>
             <CardTitle>Filtros</CardTitle>
           </CardHeader>
@@ -261,7 +258,6 @@ export default function DataManagement() {
             </Card>
           </TabsContent>
         </Tabs>
-      </div>
-    </Layout>
+    </div>
   );
 }
