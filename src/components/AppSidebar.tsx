@@ -52,11 +52,11 @@ export function AppSidebar() {
       collapsible="icon"
     >
       <SidebarContent>
-        <div className="p-4 border-b border-border">
+        <div className="p-4 border-b border-border flex-shrink-0">
           {!collapsed && (
-            <div>
-              <h2 className="text-lg font-bold text-primary">FOSSIL</h2>
-              <p className="text-xs text-muted-foreground">Completions AI Pilot</p>
+            <div className="min-w-0">
+              <h2 className="text-lg font-bold text-primary truncate">FOSSIL</h2>
+              <p className="text-xs text-muted-foreground truncate">Completions AI Pilot</p>
             </div>
           )}
           {collapsed && (
@@ -76,11 +76,11 @@ export function AppSidebar() {
                     <NavLink 
                       to={item.url} 
                       end={item.url === "/"}
-                      className="hover:bg-muted/50" 
+                      className="hover:bg-muted/50 flex items-center gap-2" 
                       activeClassName="bg-muted text-primary font-medium"
                     >
-                      <item.icon className="h-4 w-4" />
-                      {!collapsed && <span>{item.title}</span>}
+                      <item.icon className="h-4 w-4 flex-shrink-0" />
+                      {!collapsed && <span className="truncate">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -101,11 +101,11 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild>
                     <NavLink 
                       to={item.url}
-                      className="hover:bg-muted/50" 
+                      className="hover:bg-muted/50 flex items-center gap-2" 
                       activeClassName="bg-muted text-primary font-medium"
                     >
-                      <item.icon className="h-4 w-4" />
-                      {!collapsed && <span>{item.title}</span>}
+                      <item.icon className="h-4 w-4 flex-shrink-0" />
+                      {!collapsed && <span className="truncate">{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

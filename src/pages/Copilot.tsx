@@ -130,8 +130,14 @@ const Copilot = () => {
           <h2 className="text-lg font-semibold mb-4">Preguntas rápidas</h2>
           <div className="grid md:grid-cols-2 gap-3">
             {quickQuestions.map((q, idx) => (
-              <Button key={idx} variant="outline" onClick={() => handleAskQuestion(q)} disabled={loading} className="justify-start text-left h-auto py-3">
-                {q}
+              <Button 
+                key={idx} 
+                variant="outline" 
+                onClick={() => handleAskQuestion(q)} 
+                disabled={loading} 
+                className="justify-start text-left h-auto py-3 px-4 whitespace-normal break-words"
+              >
+                <span className="block">{q}</span>
               </Button>
             ))}
           </div>

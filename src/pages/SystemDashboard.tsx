@@ -7,7 +7,7 @@ import { ProgressBar } from "@/components/ProgressBar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getSystemKpis, SystemKpis } from "@/lib/kpis";
-import { ArrowLeft, AlertTriangle, CheckCircle, Clock, Download } from "lucide-react";
+import { ArrowLeft, AlertTriangle, CheckCircle, Clock, Download, Printer } from "lucide-react";
 import { toast } from "sonner";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 
@@ -49,6 +49,10 @@ const SystemDashboard = () => {
     setLoading(false);
   };
 
+  const handlePrintPDF = () => {
+    window.print();
+  };
+
   const handlePowerBIExport = async () => {
     if (!system) return;
     
@@ -58,7 +62,6 @@ const SystemDashboard = () => {
       const response = await fetch(url);
       const data = await response.json();
       
-      // Download as JSON file
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const downloadUrl = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -99,16 +102,22 @@ const SystemDashboard = () => {
   return (
     <div className="p-6">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 print:hidden">
           <Button variant="ghost" onClick={() => navigate("/")}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Volver
           </Button>
           
-          <Button onClick={handlePowerBIExport} variant="outline">
-            <Download className="mr-2 h-4 w-4" />
-            Exportar a PowerBI
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={handlePrintPDF} variant="outline">
+              <Printer className="mr-2 h-4 w-4" />
+              Descargar PDF
+            </Button>
+            <Button onClick={handlePowerBIExport} variant="outline">
+              <Download className="mr-2 h-4 w-4" />
+              Exportar a PowerBI
+            </Button>
+          </div>
         </div>
 
         <div className="mb-8">
