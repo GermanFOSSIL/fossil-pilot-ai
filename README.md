@@ -1,73 +1,170 @@
-# Welcome to your Lovable project
+# FOSSIL Completions AI Pilot
 
-## Project info
+Capa de inteligencia para Systems Completions e ITRs en proyectos Oil & Gas.
 
-**URL**: https://lovable.dev/projects/d734f4fe-eff9-4609-9da9-8d8f7203c3b9
+## 🏗️ Arquitectura
 
-## How can I edit this code?
+Esta aplicación es un piloto que simula la "capa de inteligencia" que se conectaría con:
+- GoTechnology® (CMS de completions)
+- SAP (ERP corporativo)
+- Power BI (visualización de datos)
+- SharePoint (gestión documental)
 
-There are several ways of editing your application.
+El piloto utiliza **datos de ejemplo** de un proyecto EPF real para demostrar las capacidades del sistema.
 
-**Use Lovable**
+## 🚀 Características
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/d734f4fe-eff9-4609-9da9-8d8f7203c3b9) and start prompting.
+- **Dashboard de Proyectos y Sistemas**: Visualización de KPIs en tiempo real
+- **Vista de Subsistemas**: Detalle de ITRs, Punch Lists y Preservación
+- **Copiloto IA**: Asistente inteligente para análisis de completions
+- **Historial de Insights**: Registro de análisis generados
+- **Autenticación**: Sistema de login/registro con roles
 
-Changes made via Lovable will be committed automatically to this repo.
+## 📊 Modelo de Datos
 
-**Use your preferred IDE**
+### Tablas Principales
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- `projects`: Proyectos (EPF, plantas, ductos)
+- `systems`: Sistemas críticos del proyecto
+- `subsystems`: Subsistemas dentro de cada sistema
+- `tags`: Tags/equipos individuales
+- `itrs`: Inspection Test Records (A: construcción, B: precomisionado)
+- `punch_items`: Lista de punch por categoría (A/B/C)
+- `preservation_tasks`: Tareas de preservación de equipos
+- `ai_insights`: Historial de análisis del copiloto IA
+- `user_profiles`: Perfiles de usuario con roles
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Roles de Usuario
 
-Follow these steps:
+- **ADMIN**: Puede crear y editar datos
+- **MANAGER**: Gestión general
+- **QAQC**: Quality Assurance / Quality Control
+- **PRECOM**: Precomisionado
+- **VIEWER**: Solo lectura
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 🛠️ Stack Tecnológico
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+- **Frontend**: React + TypeScript + Tailwind CSS
+- **Backend**: Lovable Cloud (Supabase)
+- **Base de Datos**: PostgreSQL
+- **IA**: Lovable AI Gateway (Google Gemini)
+- **Gráficos**: Recharts
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 🏃 Cómo Ejecutar
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+### Desarrollo Local
+
+```bash
+# Instalar dependencias
+npm install
+
+# Ejecutar en desarrollo
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Variables de Entorno
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Las siguientes variables se configuran automáticamente a través de Lovable Cloud:
 
-**Use GitHub Codespaces**
+- `VITE_SUPABASE_URL`: URL del proyecto Supabase
+- `VITE_SUPABASE_PUBLISHABLE_KEY`: API key pública
+- `LOVABLE_API_KEY`: API key para el copiloto IA (configurada automáticamente)
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🔐 Datos de Prueba
 
-## What technologies are used for this project?
+### Proyecto de Ejemplo
 
-This project is built with:
+**Proyecto**: EPF Bajada de Añelo – LACA32
+- **Sistemas**:
+  - 101P_02C – Oil Processing Train
+  - 101EL_02E – Power Distribution
+- **Subsistemas**: 5 subsistemas con estado variado
+- **Tags**: 17 equipos/instrumentos
+- **ITRs**: 40+ registros (A y B)
+- **Punch Items**: 10 items de diferentes categorías
+- **Preservación**: 7 tareas (algunas vencidas)
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Usuario de Demo
 
-## How can I deploy this project?
+Para acceder al sistema, regístrate con cualquier email o usa:
+- **Email**: Cualquier email válido
+- **Password**: Cualquier contraseña (mínimo 6 caracteres)
 
-Simply open [Lovable](https://lovable.dev/projects/d734f4fe-eff9-4609-9da9-8d8f7203c3b9) and click on Share -> Publish.
+El primer usuario registrado tendrá rol VIEWER. Para cambiar roles, ejecuta:
 
-## Can I connect a custom domain to my Lovable project?
+```sql
+UPDATE user_profiles 
+SET role = 'ADMIN' 
+WHERE email = 'tu-email@example.com';
+```
 
-Yes, you can!
+## 📱 Páginas de la Aplicación
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+1. **/** - Dashboard principal con selección de proyecto/sistema
+2. **/systems/:systemId** - Dashboard detallado del sistema con KPIs y gráficos
+3. **/systems/:systemId/subsystems/:subsystemId** - Detalle del subsistema
+4. **/copilot** - Copiloto IA para consultas sobre el proyecto
+5. **/insights** - Historial de análisis generados por la IA
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## 🤖 Copiloto IA
+
+El copiloto analiza datos de ITRs, Punch Lists y Preservación para responder preguntas como:
+
+- "¿Qué falta para que este sistema esté listo para energización?"
+- "Mostrame un resumen de ITR B pendientes por disciplina"
+- "¿Cuáles son los punch críticos A que bloquean el handover?"
+
+### Cómo Funciona
+
+1. Selecciona proyecto y sistema
+2. Haz una pregunta o usa las preguntas rápidas
+3. El copiloto:
+   - Consulta la base de datos
+   - Construye contexto con datos relevantes
+   - Usa Lovable AI (Google Gemini) para generar respuesta
+   - Guarda el análisis en la tabla `ai_insights`
+
+## 📈 Cálculo de KPIs
+
+Los KPIs se calculan en tiempo real mediante funciones en `src/lib/kpis.ts`:
+
+- **% ITR A/B Completados**: `completados / total * 100`
+- **Estado del Sistema**: 
+  - Si hay punch A abiertos → Crítico
+  - Si falta ITR B → No listo para energización
+- **Preservación Vencida**: `next_due_date < hoy`
+
+## 🎨 Sistema de Diseño
+
+Paleta de colores industrial:
+
+- **Primario**: Azul oscuro (`hsl(215 35% 25%)`)
+- **Secundario**: Índigo (`hsl(245 50% 58%)`)
+- **Warning**: Naranja (`hsl(30 95% 55%)`)
+- **Success**: Verde (`hsl(142 70% 45%)`)
+- **Destructive**: Rojo (`hsl(0 85% 60%)`)
+
+Todos los colores están definidos en `src/index.css` y `tailwind.config.ts` usando tokens semánticos.
+
+## 🔄 Próximos Pasos
+
+Para producción, integrar con:
+
+1. **GoTechnology® API**: Sincronización automática de ITRs y punch
+2. **SAP**: Datos de materiales, órdenes de trabajo, recursos
+3. **Power BI**: Dashboards corporativos
+4. **SharePoint**: Gestión documental y certificados
+
+## 📚 Documentación Adicional
+
+- [Lovable Cloud Docs](https://docs.lovable.dev/features/cloud)
+- [Lovable AI Docs](https://docs.lovable.dev/features/ai)
+- [Supabase Docs](https://supabase.com/docs)
+
+## 🤝 Contribución
+
+Este es un proyecto piloto para demostración de concepto.
+
+## 📄 Licencia
+
+Propietario: FOSSIL / Wood Group
