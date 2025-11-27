@@ -186,7 +186,7 @@ const Index = () => {
                 <StatusBadge status={currentSystem.criticality} type="criticality" />
               </div>
             </div>
-            <Link to={`/systems/${selectedSystem}`}>
+            <Link to={`/system/${selectedSystem}`}>
               <Button>
                 <BarChart3 className="mr-2 h-4 w-4" />
                 Ver Dashboard Completo

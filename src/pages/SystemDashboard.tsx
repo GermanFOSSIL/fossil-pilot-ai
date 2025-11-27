@@ -225,7 +225,7 @@ const SystemDashboard = () => {
             {subsystems.map((subsystem) => (
               <Link
                 key={subsystem.id}
-                to={`/systems/${systemId}/subsystems/${subsystem.id}`}
+                to={`/system/${systemId}/subsystem/${subsystem.id}`}
                 className="block p-4 bg-muted/50 rounded-lg hover:bg-muted transition-colors"
               >
                 <div className="flex justify-between items-start mb-2">

@@ -31,7 +31,7 @@ const App = () => (
           <Route path="/insights" element={<Layout><Insights /></Layout>} />
           <Route path="/systems" element={<Layout><Systems /></Layout>} />
           <Route path="/system/:systemId" element={<Layout><SystemDashboard /></Layout>} />
-          <Route path="/subsystem/:subsystemId" element={<Layout><SubsystemDetail /></Layout>} />
+          <Route path="/system/:systemId/subsystem/:subsystemId" element={<Layout><SubsystemDetail /></Layout>} />
           <Route path="/admin/data-import" element={<Layout><DataImport /></Layout>} />
           <Route path="/admin/data-management" element={<Layout><DataManagement /></Layout>} />
           <Route path="/admin/import-history" element={<Layout><ImportHistory /></Layout>} />
