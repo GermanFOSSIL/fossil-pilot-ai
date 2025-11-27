@@ -68,7 +68,7 @@ const SubsystemDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="p-6">
       <div className="max-w-7xl mx-auto">
         <Button variant="ghost" onClick={() => navigate(`/systems/${systemId}`)} className="mb-4">
           <ArrowLeft className="mr-2 h-4 w-4" />

@@ -90,31 +90,30 @@ const Index = () => {
   const currentSystem = systems.find((s) => s.id === selectedSystem);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto p-6">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl font-bold">FOSSIL Completions AI Pilot</h1>
-            <p className="text-muted-foreground mt-2">Capa de inteligencia para Systems Completions e ITRs</p>
-          </div>
-          <div className="flex gap-2">
-            <Link to="/copilot">
-              <Button variant="outline">
-                <Sparkles className="mr-2 h-4 w-4" />
-                Copiloto IA
-              </Button>
-            </Link>
-            <Link to="/insights">
-              <Button variant="outline">
-                <FileText className="mr-2 h-4 w-4" />
-                Insights
-              </Button>
-            </Link>
-            <Button onClick={handleSignOut} variant="outline">
-              Cerrar Sesión
-            </Button>
-          </div>
+    <div className="container mx-auto p-6">
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-4xl font-bold">FOSSIL Completions AI Pilot</h1>
+          <p className="text-muted-foreground mt-2">Capa de inteligencia para Systems Completions e ITRs</p>
         </div>
+        <div className="flex gap-2">
+          <Link to="/copilot">
+            <Button variant="outline">
+              <Sparkles className="mr-2 h-4 w-4" />
+              Copiloto IA
+            </Button>
+          </Link>
+          <Link to="/insights">
+            <Button variant="outline">
+              <FileText className="mr-2 h-4 w-4" />
+              Insights
+            </Button>
+          </Link>
+          <Button onClick={handleSignOut} variant="outline">
+            Cerrar Sesión
+          </Button>
+        </div>
+      </div>
 
         <Card className="p-6 mb-8">
           <div className="grid md:grid-cols-2 gap-6">
@@ -175,29 +174,28 @@ const Index = () => {
           />
         </div>
 
-        {currentSystem && (
-          <Card className="p-6 mb-6">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h2 className="text-2xl font-bold mb-2">
-                  {currentSystem.code} – {currentSystem.name}
-                </h2>
-                <div className="flex gap-2">
-                  <StatusBadge status={currentSystem.status} type="system" />
-                  <StatusBadge status={currentSystem.criticality} type="criticality" />
-                </div>
+      {currentSystem && (
+        <Card className="p-6 mb-6">
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <h2 className="text-2xl font-bold mb-2">
+                {currentSystem.code} – {currentSystem.name}
+              </h2>
+              <div className="flex gap-2">
+                <StatusBadge status={currentSystem.status} type="system" />
+                <StatusBadge status={currentSystem.criticality} type="criticality" />
               </div>
-              <Link to={`/systems/${selectedSystem}`}>
-                <Button>
-                  <BarChart3 className="mr-2 h-4 w-4" />
-                  Ver Dashboard Completo
-                </Button>
-              </Link>
             </div>
-            <p className="text-muted-foreground">{currentSystem.description}</p>
-          </Card>
-        )}
-      </div>
+            <Link to={`/systems/${selectedSystem}`}>
+              <Button>
+                <BarChart3 className="mr-2 h-4 w-4" />
+                Ver Dashboard Completo
+              </Button>
+            </Link>
+          </div>
+          <p className="text-muted-foreground">{currentSystem.description}</p>
+        </Card>
+      )}
     </div>
   );
 };
