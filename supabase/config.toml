@@ -1,1 +1,13 @@
 project_id = "woodtnjujstuyderwxuh"
+
+[functions.ai-query]
+verify_jwt = true
+
+[functions.import-data]
+verify_jwt = true
+
+[functions.api-import]
+verify_jwt = true
+
+[functions.powerbi-export]
+verify_jwt = false

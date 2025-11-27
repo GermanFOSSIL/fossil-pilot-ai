@@ -7,7 +7,8 @@ import { ProgressBar } from "@/components/ProgressBar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { getSystemKpis, SystemKpis } from "@/lib/kpis";
-import { ArrowLeft, AlertTriangle, CheckCircle, Clock } from "lucide-react";
+import { ArrowLeft, AlertTriangle, CheckCircle, Clock, Download } from "lucide-react";
+import { toast } from "sonner";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 
 const COLORS = ["hsl(var(--status-completed))", "hsl(var(--status-in-progress))", "hsl(var(--status-not-started))", "hsl(var(--status-rejected))"];
@@ -48,6 +49,33 @@ const SystemDashboard = () => {
     setLoading(false);
   };
 
+  const handlePowerBIExport = async () => {
+    if (!system) return;
+    
+    try {
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/powerbi-export?project_id=${system.project_id}&system_id=${systemId}`;
+      
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      // Download as JSON file
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = downloadUrl;
+      a.download = `powerbi-export-${system.code}.json`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(downloadUrl);
+      document.body.removeChild(a);
+      
+      toast.success("Datos exportados para PowerBI");
+    } catch (error) {
+      console.error("Error exporting to PowerBI:", error);
+      toast.error("Error al exportar datos");
+    }
+  };
+
   if (loading || !system || !kpis) {
     return <div className="p-6">Cargando...</div>;
   }
@@ -71,10 +99,17 @@ const SystemDashboard = () => {
   return (
     <div className="p-6">
       <div className="max-w-7xl mx-auto">
-        <Button variant="ghost" onClick={() => navigate("/")} className="mb-4">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Volver
-        </Button>
+        <div className="flex items-center justify-between mb-4">
+          <Button variant="ghost" onClick={() => navigate("/")}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Volver
+          </Button>
+          
+          <Button onClick={handlePowerBIExport} variant="outline">
+            <Download className="mr-2 h-4 w-4" />
+            Exportar a PowerBI
+          </Button>
+        </div>
 
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">

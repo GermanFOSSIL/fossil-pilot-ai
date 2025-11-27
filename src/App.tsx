@@ -10,9 +10,9 @@ import SystemDashboard from "./pages/SystemDashboard";
 import SubsystemDetail from "./pages/SubsystemDetail";
 import Copilot from "./pages/Copilot";
 import Insights from "./pages/Insights";
-import ProjectsAdmin from "./pages/admin/Projects";
-import SystemsAdmin from "./pages/admin/Systems";
-import SubsystemsAdmin from "./pages/admin/Subsystems";
+import DataImport from "./pages/admin/DataImport";
+import DataManagement from "./pages/admin/DataManagement";
+import ImportHistory from "./pages/admin/ImportHistory";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,9 +30,9 @@ const App = () => (
           <Route path="/systems/:systemId/subsystems/:subsystemId" element={<Layout><SubsystemDetail /></Layout>} />
           <Route path="/copilot" element={<Layout><Copilot /></Layout>} />
           <Route path="/insights" element={<Layout><Insights /></Layout>} />
-          <Route path="/admin/projects" element={<Layout><ProjectsAdmin /></Layout>} />
-          <Route path="/admin/systems" element={<Layout><SystemsAdmin /></Layout>} />
-          <Route path="/admin/subsystems" element={<Layout><SubsystemsAdmin /></Layout>} />
+          <Route path="/admin/data-import" element={<Layout><DataImport /></Layout>} />
+          <Route path="/admin/data-management" element={<Layout><DataManagement /></Layout>} />
+          <Route path="/admin/import-history" element={<Layout><ImportHistory /></Layout>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

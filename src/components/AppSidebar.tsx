@@ -3,12 +3,9 @@ import {
   Sparkles, 
   LightbulbIcon, 
   Settings,
-  FolderKanban,
-  ListTree,
-  Tag,
-  ClipboardList,
-  AlertCircle,
-  Shield
+  Upload,
+  Database,
+  History as HistoryIcon
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
@@ -33,13 +30,9 @@ const mainItems = [
 ];
 
 const adminItems = [
-  { title: "Proyectos", url: "/admin/projects", icon: FolderKanban },
-  { title: "Sistemas", url: "/admin/systems", icon: ListTree },
-  { title: "Subsistemas", url: "/admin/subsystems", icon: ListTree },
-  { title: "Tags", url: "/admin/tags", icon: Tag },
-  { title: "ITRs", url: "/admin/itrs", icon: ClipboardList },
-  { title: "Punch Items", url: "/admin/punch", icon: AlertCircle },
-  { title: "Preservación", url: "/admin/preservation", icon: Shield },
+  { title: "Importación de Datos", url: "/admin/data-import", icon: Upload },
+  { title: "Gestión de Datos", url: "/admin/data-management", icon: Database },
+  { title: "Historial", url: "/admin/import-history", icon: HistoryIcon },
 ];
 
 export function AppSidebar() {

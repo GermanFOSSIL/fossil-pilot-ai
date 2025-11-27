@@ -66,6 +66,72 @@ export type Database = {
           },
         ]
       }
+      import_logs: {
+        Row: {
+          created_at: string | null
+          entity_type: string
+          error_details: Json | null
+          file_name: string | null
+          id: string
+          import_type: string
+          metadata: Json | null
+          project_id: string | null
+          records_failed: number | null
+          records_processed: number | null
+          records_success: number | null
+          status: string | null
+          system_id: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          entity_type: string
+          error_details?: Json | null
+          file_name?: string | null
+          id?: string
+          import_type: string
+          metadata?: Json | null
+          project_id?: string | null
+          records_failed?: number | null
+          records_processed?: number | null
+          records_success?: number | null
+          status?: string | null
+          system_id?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          entity_type?: string
+          error_details?: Json | null
+          file_name?: string | null
+          id?: string
+          import_type?: string
+          metadata?: Json | null
+          project_id?: string | null
+          records_failed?: number | null
+          records_processed?: number | null
+          records_success?: number | null
+          status?: string | null
+          system_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_logs_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_logs_system_id_fkey"
+            columns: ["system_id"]
+            isOneToOne: false
+            referencedRelation: "systems"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       itrs: {
         Row: {
           comments: string | null
