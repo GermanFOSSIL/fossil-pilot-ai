@@ -1,4 +1,3 @@
-import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -7,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { AlertCircle, CheckCircle, Clock, XCircle } from "lucide-react";
+import { AlertCircle, CheckCircle, Clock, XCircle, Loader2 } from "lucide-react";
 
 export default function ImportHistory() {
   const { data: imports, isLoading } = useQuery({
@@ -57,17 +56,23 @@ export default function ImportHistory() {
     );
   };
 
-  return (
-    <Layout>
-      <div className="container mx-auto p-6 space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Historial de Importaciones</h1>
-          <p className="text-muted-foreground">
-            Registro completo de todas las importaciones de datos
-          </p>
-        </div>
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
-        <Card>
+  return (
+    <div className="space-y-6">
+      <div>
+        <p className="text-muted-foreground">
+          Registro completo de todas las importaciones de datos
+        </p>
+      </div>
+
+      <Card>
           <CardHeader>
             <CardTitle>Importaciones Recientes</CardTitle>
             <CardDescription>
@@ -149,7 +154,6 @@ export default function ImportHistory() {
             )}
           </CardContent>
         </Card>
-      </div>
-    </Layout>
+    </div>
   );
 }

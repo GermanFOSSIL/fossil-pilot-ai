@@ -1,4 +1,3 @@
-import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -106,16 +105,14 @@ export default function DataImport() {
   };
 
   return (
-    <Layout>
-      <div className="container mx-auto p-6 space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">Importación de Datos</h1>
-          <p className="text-muted-foreground">
-            Carga masiva de datos desde archivos Excel/CSV o integraciones API
-          </p>
-        </div>
+    <div className="space-y-6">
+      <div>
+        <p className="text-muted-foreground">
+          Carga masiva de datos desde archivos Excel/CSV o integraciones API
+        </p>
+      </div>
 
-        <Card>
+      <Card>
           <CardHeader>
             <CardTitle>Contexto de Importación</CardTitle>
             <CardDescription>Selecciona el proyecto y sistema destino</CardDescription>
@@ -397,7 +394,6 @@ Content-Type: application/json
             </div>
           </TabsContent>
         </Tabs>
-      </div>
-    </Layout>
+    </div>
   );
 }
