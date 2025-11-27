@@ -70,7 +70,7 @@ const SubsystemDetail = () => {
   return (
     <div className="p-6">
       <div className="max-w-7xl mx-auto">
-        <Button variant="ghost" onClick={() => navigate(`/systems/${systemId}`)} className="mb-4">
+        <Button variant="ghost" onClick={() => navigate(`/system/${systemId}`)} className="mb-4">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Volver al Sistema
         </Button>
