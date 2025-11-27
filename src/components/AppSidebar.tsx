@@ -19,7 +19,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
 
@@ -51,7 +50,7 @@ export function AppSidebar() {
       className={collapsed ? "w-14" : "w-60"}
       collapsible="icon"
     >
-      <SidebarContent>
+      <SidebarContent className="overflow-y-auto">
         <div className="p-4 border-b border-border flex-shrink-0">
           {!collapsed && (
             <div className="min-w-0">
