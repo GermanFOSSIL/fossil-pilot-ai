@@ -13,6 +13,8 @@ import { Edit, Trash2 } from "lucide-react";
 export default function DataManagement() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [selectedProject, setSelectedProject] = useState<string>("");
+  const [selectedSystem, setSelectedSystem] = useState<string>("");
+  const [selectedSubsystem, setSelectedSubsystem] = useState<string>("");
 
   const { data: projects } = useQuery({
     queryKey: ["projects"],
@@ -23,24 +25,74 @@ export default function DataManagement() {
     },
   });
 
-  const { data: itrs } = useQuery({
-    queryKey: ["itrs", selectedProject],
+  const { data: systems } = useQuery({
+    queryKey: ["systems", selectedProject],
     queryFn: async () => {
       if (!selectedProject) return [];
       const { data, error } = await supabase
+        .from("systems")
+        .select("*")
+        .eq("project_id", selectedProject)
+        .order("code");
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!selectedProject,
+  });
+
+  const { data: subsystems } = useQuery({
+    queryKey: ["subsystems", selectedSystem],
+    queryFn: async () => {
+      if (!selectedSystem) return [];
+      const { data, error } = await supabase
+        .from("subsystems")
+        .select("*")
+        .eq("system_id", selectedSystem)
+        .order("code");
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!selectedSystem,
+  });
+
+  const { data: itrs } = useQuery({
+    queryKey: ["itrs", selectedProject, selectedSystem, selectedSubsystem],
+    queryFn: async () => {
+      let query = supabase
         .from("itrs")
         .select(`
           *,
           subsystem:subsystems(
+            id,
             code,
             name,
-            system:systems(project_id)
+            system:systems(
+              id,
+              code,
+              name,
+              project_id
+            )
+          ),
+          tag:tags(
+            tag_code,
+            description
           )
         `)
         .order("itr_code");
       
+      const { data, error } = await query;
       if (error) throw error;
-      return data.filter((itr: any) => itr.subsystem?.system?.project_id === selectedProject);
+      
+      // Filter based on hierarchy
+      return data.filter((itr: any) => {
+        if (!itr.subsystem?.system) return false;
+        
+        const matchesProject = !selectedProject || itr.subsystem.system.project_id === selectedProject;
+        const matchesSystem = !selectedSystem || itr.subsystem.system.id === selectedSystem;
+        const matchesSubsystem = !selectedSubsystem || itr.subsystem.id === selectedSubsystem;
+        
+        return matchesProject && matchesSystem && matchesSubsystem;
+      });
     },
     enabled: !!selectedProject,
   });
@@ -93,21 +145,82 @@ export default function DataManagement() {
       <Card>
           <CardHeader>
             <CardTitle>Filtros</CardTitle>
+            <CardDescription>Jerarquía: Proyecto → Sistema → Subsistema → Tag → ITR</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="w-64">
-              <Select value={selectedProject} onValueChange={setSelectedProject}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar proyecto" />
-                </SelectTrigger>
-                <SelectContent>
-                  {projects?.map((project) => (
-                    <SelectItem key={project.id} value={project.id}>
-                      {project.code} - {project.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="text-sm font-medium mb-2 block">Proyecto</label>
+                <Select 
+                  value={selectedProject} 
+                  onValueChange={(value) => {
+                    setSelectedProject(value);
+                    setSelectedSystem("");
+                    setSelectedSubsystem("");
+                    setSelectedIds([]);
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar proyecto" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {projects?.map((project) => (
+                      <SelectItem key={project.id} value={project.id}>
+                        {project.code} - {project.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium mb-2 block">Sistema</label>
+                <Select 
+                  value={selectedSystem} 
+                  onValueChange={(value) => {
+                    setSelectedSystem(value);
+                    setSelectedSubsystem("");
+                    setSelectedIds([]);
+                  }}
+                  disabled={!selectedProject}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar sistema" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Todos los sistemas</SelectItem>
+                    {systems?.map((system) => (
+                      <SelectItem key={system.id} value={system.id}>
+                        {system.code} - {system.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium mb-2 block">Subsistema</label>
+                <Select 
+                  value={selectedSubsystem} 
+                  onValueChange={(value) => {
+                    setSelectedSubsystem(value);
+                    setSelectedIds([]);
+                  }}
+                  disabled={!selectedSystem}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar subsistema" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Todos los subsistemas</SelectItem>
+                    {subsystems?.map((subsystem) => (
+                      <SelectItem key={subsystem.id} value={subsystem.id}>
+                        {subsystem.code} - {subsystem.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -158,7 +271,11 @@ export default function DataManagement() {
                     Selecciona un proyecto para ver los ITRs
                   </p>
                 ) : itrs && itrs.length > 0 ? (
-                  <Table>
+                  <div className="space-y-4">
+                    <div className="text-sm text-muted-foreground">
+                      Mostrando {itrs.length} ITRs
+                    </div>
+                    <Table>
                     <TableHeader>
                       <TableRow>
                         <TableHead className="w-12">
@@ -173,10 +290,12 @@ export default function DataManagement() {
                             }}
                           />
                         </TableHead>
-                        <TableHead>Código</TableHead>
+                        <TableHead>Código ITR</TableHead>
+                        <TableHead>Tag</TableHead>
                         <TableHead>Tipo</TableHead>
                         <TableHead>Disciplina</TableHead>
                         <TableHead>Estado</TableHead>
+                        <TableHead>Sistema</TableHead>
                         <TableHead>Subsistema</TableHead>
                         <TableHead>Acciones</TableHead>
                       </TableRow>
@@ -190,12 +309,31 @@ export default function DataManagement() {
                               onCheckedChange={() => toggleSelection(itr.id)}
                             />
                           </TableCell>
-                          <TableCell>{itr.itr_code}</TableCell>
-                          <TableCell>{itr.itr_type}</TableCell>
-                          <TableCell>{itr.discipline}</TableCell>
-                          <TableCell>{itr.status}</TableCell>
+                          <TableCell className="font-mono text-sm">{itr.itr_code}</TableCell>
+                          <TableCell className="font-mono text-xs">
+                            {itr.tag?.tag_code || '-'}
+                          </TableCell>
                           <TableCell>
-                            {itr.subsystem?.code} - {itr.subsystem?.name}
+                            <span className="px-2 py-1 rounded-full text-xs bg-primary/10 text-primary">
+                              {itr.itr_type}
+                            </span>
+                          </TableCell>
+                          <TableCell>{itr.discipline}</TableCell>
+                          <TableCell>
+                            <span className={`px-2 py-1 rounded-full text-xs ${
+                              itr.status === 'COMPLETED' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                              itr.status === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
+                              itr.status === 'REJECTED' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
+                              'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
+                            }`}>
+                              {itr.status}
+                            </span>
+                          </TableCell>
+                          <TableCell className="text-sm">
+                            {itr.subsystem?.system?.code}
+                          </TableCell>
+                          <TableCell className="text-sm">
+                            {itr.subsystem?.code}
                           </TableCell>
                           <TableCell>
                             <Button variant="ghost" size="sm">
@@ -206,6 +344,7 @@ export default function DataManagement() {
                       ))}
                     </TableBody>
                   </Table>
+                  </div>
                 ) : (
                   <p className="text-center text-muted-foreground py-8">
                     No hay ITRs para este proyecto
